@@ -1,0 +1,63 @@
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode sortList(ListNode head) {
+        // Base case: If the list is empty or has only one node, it's already sorted
+        if (head == null || head.next == null) {
+            return head;
+        }
+
+        // Step 1: Find the middle of the linked list
+        ListNode mid = getMiddle(head);
+        ListNode rightHead = mid.next;
+        mid.next = null; // Break the list into two halves
+
+        // Step 2: Recursively sort both halves
+        ListNode leftSorted = sortList(head);
+        ListNode rightSorted = sortList(rightHead);
+
+        // Step 3: Merge the sorted halves
+        return merge(leftSorted, rightSorted);
+    }
+
+    // Function to find the middle of the list (using slow & fast pointer approach)
+    private ListNode getMiddle(ListNode head) {
+        ListNode slow = head, fast = head.next;
+        while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        return slow;
+    }
+
+    // Function to merge two sorted linked lists
+    private ListNode merge(ListNode l1, ListNode l2) {
+        ListNode dummy = new ListNode(0);
+        ListNode current = dummy;
+
+        while (l1 != null && l2 != null) {
+            if (l1.val < l2.val) {
+                current.next = l1;
+                l1 = l1.next;
+            } else {
+                current.next = l2;
+                l2 = l2.next;
+            }
+            current = current.next;
+        }
+
+        // Append any remaining nodes
+        if (l1 != null) current.next = l1;
+        if (l2 != null) current.next = l2;
+
+        return dummy.next;
+    }
+}
